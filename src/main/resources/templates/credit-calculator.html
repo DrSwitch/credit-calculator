@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/credit-calculator.css">
+
+    <script src="script/jquery-3.4.1.min.js"></script>
+
+    <title>Кредитный калькулятор</title>
+</head>
+<body>
+
+    <div id="credit-info">
+        <span id="sum-credit-label">Сумма:</span>
+        <input id="sum-credit" class="input-credit-info" type="number" required maxlength="7" minlength="6">
+        <span id="term-credit-label">Срок:</span>
+        <input id="term-credit" class="input-credit-info" type="number" required maxlength="7" minlength="6">
+        <span id="interest-rate-label">Процентная ставка:</span>
+        <span id="interest-rate"></span>
+    </div>
+
+    <div id="payment-table">
+
+    </div>
+
+</body>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+
+    });
+
+    $('.input-credit-info').on('change', function () {
+        if(!$('#sum-credit').val()) return;
+        if(!$('#term-credit').val()) return;
+        let data = {
+            "sum": $('#sum-credit').val(),
+            "term": $('#term-credit').val()
+        };
+        getPaymentList(data);
+    });
+
+    function getPaymentList(data) {
+        fetch('getPaymentList', {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            redirect: 'follow',
+            referrer: 'no-referrer',
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json());
+
+    }
+
+</script>
+</html>
