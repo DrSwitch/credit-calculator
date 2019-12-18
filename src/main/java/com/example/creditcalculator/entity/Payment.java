@@ -5,10 +5,10 @@ import java.time.LocalDate;
 public class Payment {
     private int number;
     private LocalDate date;
-    private String principalPayment;
-    private String interestPayment;
-    private String balanceOfPrincipal;
-    private String totalPayment;
+    private String principalPayment; // Платёж по основному долгу
+    private String interestPayment; // Платёж по процентам
+    private String balanceOfPrincipal; // Остаток основного долга
+    private String totalPayment; // Общая сумма платежа
 
     @Override
     public String toString() {

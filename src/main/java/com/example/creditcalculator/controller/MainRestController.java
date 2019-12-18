@@ -70,7 +70,7 @@ public class MainRestController {
         double S = valueOf(creditInfo.getSum());
         for (int i = 0; i < paymentList.size() - 1; i++) {
             S = S - Double.parseDouble(paymentList.get(i).getPrincipalPayment())
-                    + Double.parseDouble(paymentList.get(i).getInterestPayment());
+                    - Double.parseDouble(paymentList.get(i).getInterestPayment());
         }
 
         return df.format(S);
@@ -85,10 +85,10 @@ public class MainRestController {
     }
 
     private String getTotalPayment(List<Payment> paymentList) {
-        double balanceOfPrincipal = Double.parseDouble(paymentList.get(paymentList.size()-1).getBalanceOfPrincipal());
+        double principalPayment = Double.parseDouble(paymentList.get(paymentList.size()-1).getPrincipalPayment());
         double interestPayment = Double.parseDouble(paymentList.get(paymentList.size()-1).getInterestPayment());
 
-        return df.format(balanceOfPrincipal + interestPayment);
+        return df.format(principalPayment + interestPayment);
     }
 
 }
