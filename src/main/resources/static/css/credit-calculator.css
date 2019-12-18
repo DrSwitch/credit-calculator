@@ -22,11 +22,11 @@ body {
 #credit-info {
     display: grid;
     grid-template-areas:
-            "sum-credit-label sum-credit"
-            "term-credit-label term-credit"
-            "interest-rate-label interest-rate";
+            "sum-credit-label sum-credit sum-credit-error"
+            "term-credit-label term-credit term-credit-error"
+            "interest-rate-label interest-rate interest-rate";
     grid-template-rows: max-content max-content max-content;
-    grid-template-columns: max-content max-content;
+    grid-template-columns: max-content max-content max-content;
     grid-gap: 10px;
     margin: 0;
     padding: 15px;
@@ -41,12 +41,20 @@ body {
     grid-area: sum-credit;
 }
 
+#sum-credit-error {
+    grid-area: sum-credit-error;
+}
+
 #term-credit-label {
     grid-area: term-credit-label;
 }
 
 #term-credit {
     grid-area: term-credit;
+}
+
+#term-credit-error {
+    grid-area: term-credit-error;
 }
 
 #interest-rate-label {
@@ -57,17 +65,31 @@ body {
     grid-area: interest-rate;
 }
 
-/*#payment-table {*/
-/*    display: grid;*/
-/*    grid-template-areas:*/
-/*        "";*/
-/*    grid-template-rows: 60px 1fr;*/
-/*    grid-template-columns: 1fr;*/
-/*    grid-gap: 10px;*/
-/*    margin: 0;*/
-/*    padding: 15px;*/
-/*    background-color: white;*/
-/*}*/
+#payment-table {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+    margin: 0;
+    padding: 15px;
+    background-color: white;
+}
+
+.error {
+    color: #d6090f;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(6, 200px);
+    grid-gap: 10px;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+.col {
+    width: 200px;
+}
 
 input {
     padding: 2px;

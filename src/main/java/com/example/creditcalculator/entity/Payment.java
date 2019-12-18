@@ -1,10 +1,10 @@
 package com.example.creditcalculator.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Payment {
     private int number;
-    private Date date;
+    private LocalDate date;
     private String principalPayment;
     private String interestPayment;
     private String balanceOfPrincipal;
@@ -30,11 +30,11 @@ public class Payment {
         this.number = number;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

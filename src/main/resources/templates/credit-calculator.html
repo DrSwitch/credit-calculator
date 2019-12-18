@@ -13,26 +13,29 @@
     <div id="credit-info">
         <span id="sum-credit-label">Сумма:</span>
         <input id="sum-credit" class="input-credit-info" type="number" required maxlength="7" minlength="6">
+        <span id="sum-credit-error" class="error">Сумма кредита должна быть от 100 000 до 5 000 000</span>
+
         <span id="term-credit-label">Срок:</span>
         <input id="term-credit" class="input-credit-info" type="number" required maxlength="7" minlength="6">
+        <span id="term-credit-error" class="error">Срок кредита должен быть от 12 до 60</span>
+
         <span id="interest-rate-label">Процентная ставка:</span>
-        <span id="interest-rate"></span>
+        <span id="interest-rate" th:value="${interestRate}" th:text="${interestRate} + ' %'"></span>
     </div>
 
     <div id="payment-table">
+
 
     </div>
 
 </body>
 <script th:inline="javascript">
-
-    $(document).ready(function () {
-
-    });
+    $('.error').hide();
 
     $('.input-credit-info').on('change', function () {
-        if(!$('#sum-credit').val()) return;
-        if(!$('#term-credit').val()) return;
+        if (!validateSumCredit()) return;
+        if (!validateTermCredit()) return;
+
         let data = {
             "sum": $('#sum-credit').val(),
             "term": $('#term-credit').val()
@@ -53,8 +56,72 @@
             referrer: 'no-referrer',
             body: JSON.stringify(data),
         })
-        .then(response => response.json());
+        .then(response => response.json())
+        .then(function (body) {
+            fillPaymentTable(body.object);
+        });
+    }
 
+    function fillPaymentTable(paymentList) {
+        $('#payment-table').empty();
+
+        console.log(paymentList);
+        let divHeaders = $('<div>', {class: 'row'});
+        divHeaders.append($('<span>', {class: 'col', text: 'Номер'}));
+        divHeaders.append($('<span>', {class: 'col', text: 'Месяц/Год'}));
+        divHeaders.append($('<span>', {class: 'col', text: 'Платёж по основному долгу'}));
+        divHeaders.append($('<span>', {class: 'col', text: 'Платёж по процентам'}));
+        divHeaders.append($('<span>', {class: 'col', text: 'Остаток основного долга'}));
+        divHeaders.append($('<span>', {class: 'col', text: 'Общая сумма платежа'}));
+
+        $('#payment-table').append(divHeaders);
+
+        for (let i = 0; i< paymentList.length; i++) {
+            let divRow = $('<div>', {class: 'row'});
+            divRow.append($('<span>', {class: 'col', text: paymentList[i].number}));
+            divRow.append($('<span>', {class: 'col', text: paymentList[i].date}));
+            divRow.append($('<span>', {class: 'col', text: paymentList[i].principalPayment}));
+            divRow.append($('<span>', {class: 'col', text: paymentList[i].interestPayment}));
+            divRow.append($('<span>', {class: 'col', text: paymentList[i].balanceOfPrincipal}));
+            divRow.append($('<span>', {class: 'col', text: paymentList[i].totalPayment}));
+            $('#payment-table').append(divRow);
+            console.log(paymentList[i]);
+        }
+
+    }
+
+    function validateSumCredit() {
+        if (!$('#sum-credit').val()) return false;
+
+        if ($('#sum-credit').val() > 5000000) {
+            $('#sum-credit-error').show();
+            return false;
+        }
+
+        if ($('#sum-credit').val() < 100000) {
+            $('#sum-credit-error').show();
+            return false;
+        }
+        $('#sum-credit-error').hide();
+
+        return true;
+    }
+
+    function validateTermCredit() {
+        if (!$('#term-credit').val()) return false;
+
+        if ($('#term-credit').val() > 60) {
+            $('#term-credit-error').show();
+            return false;
+        }
+
+        if ($('#term-credit').val() < 12) {
+            $('#term-credit-error').show();
+            return false;
+        }
+        $('#term-credit-error').hide();
+
+        return true;
     }
 
 </script>
