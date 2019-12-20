@@ -24,15 +24,13 @@ public class MainRestController {
     @PostMapping("getPaymentList")
     public ResponseForm getPaymentList(@RequestBody CreditInfo creditInfo) {
         ResponseForm<List<Payment>> responseForm = new ResponseForm<>();
-//        try {
+        try {
             responseForm.setSuccess(true);
             responseForm.setObject(getPayment(creditInfo));
-//
-//        } catch (Exception e) {
-//            responseForm.setSuccess(false);
-//            responseForm.setData(e.toString());
-//        }
-
+        } catch (Exception e) {
+            responseForm.setSuccess(false);
+            responseForm.setData(e.toString());
+        }
         return responseForm;
     }
 
@@ -42,6 +40,7 @@ public class MainRestController {
         double X = getPrincipalPayment(creditInfo);
         double S = valueOf(creditInfo.getSum());
         double P = Double.parseDouble(interestRate) / 1200;
+        double Sn = S;
 
         for (int i = 0; i < creditInfo.getTerm(); i++) {
             Payment payment = new Payment();
@@ -49,14 +48,17 @@ public class MainRestController {
             payment.setNumber(i + 1);
             payment.setDate(LocalDate.now().plusMonths(i));
             payment.setPrincipalPayment(df.format(X));
-            double Sn = S - (i) * X;
-            payment.setBalanceOfPrincipal(df.format(Sn));
-            double Pn = Sn * P / 12;
+
+            double Pn = Sn * P;
             payment.setInterestPayment(df.format(Pn));
+
+            payment.setBalanceOfPrincipal(df.format(Sn));
+            double s = X - Pn;
+            Sn = Sn - s;
+
             payment.setTotalPayment(df.format(X + Pn));
 
             paymentList.add(payment);
-
         }
 
         return paymentList;
@@ -67,7 +69,6 @@ public class MainRestController {
         double N = valueOf(creditInfo.getTerm());
         double P = Double.parseDouble(interestRate) / 1200;
 //        double result = S * (P / (1 - Math.pow((1 + P), -N)));
-
         return S * (P + (P / (Math.pow((1 + P), N) - 1)));
     }
 
