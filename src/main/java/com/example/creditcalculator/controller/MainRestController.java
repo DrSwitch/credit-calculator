@@ -24,14 +24,14 @@ public class MainRestController {
     @PostMapping("getPaymentList")
     public ResponseForm getPaymentList(@RequestBody CreditInfo creditInfo) {
         ResponseForm<List<Payment>> responseForm = new ResponseForm<>();
-        try {
+//        try {
             responseForm.setSuccess(true);
             responseForm.setObject(getPayment(creditInfo));
-
-        } catch (Exception e) {
-            responseForm.setSuccess(false);
-            responseForm.setData(e.toString());
-        }
+//
+//        } catch (Exception e) {
+//            responseForm.setSuccess(false);
+//            responseForm.setData(e.toString());
+//        }
 
         return responseForm;
     }
@@ -39,56 +39,36 @@ public class MainRestController {
     private List<Payment> getPayment(CreditInfo creditInfo){
         List<Payment> paymentList = new ArrayList<>();
 
-        String principalPayment = getPrincipalPayment(creditInfo);
+        double X = getPrincipalPayment(creditInfo);
+        double S = valueOf(creditInfo.getSum());
+        double P = Double.parseDouble(interestRate) / 1200;
+
         for (int i = 0; i < creditInfo.getTerm(); i++) {
             Payment payment = new Payment();
-            paymentList.add(payment);
 
-            paymentList.get(i).setNumber(i+1);
-            paymentList.get(i).setDate(LocalDate.now().plusMonths(i));
-            paymentList.get(i).setPrincipalPayment(principalPayment);
-            paymentList.get(i).setBalanceOfPrincipal(getBalanceOfPrincipal(creditInfo, paymentList));
-            paymentList.get(i).setInterestPayment(getInterestPayment(paymentList));
-            paymentList.get(i).setTotalPayment(getTotalPayment(paymentList));
+            payment.setNumber(i + 1);
+            payment.setDate(LocalDate.now().plusMonths(i));
+            payment.setPrincipalPayment(df.format(X));
+            double Sn = S - (i) * X;
+            payment.setBalanceOfPrincipal(df.format(Sn));
+            double Pn = Sn * P / 12;
+            payment.setInterestPayment(df.format(Pn));
+            payment.setTotalPayment(df.format(X + Pn));
+
+            paymentList.add(payment);
 
         }
 
         return paymentList;
     }
 
-    private String getPrincipalPayment(CreditInfo creditInfo) {
+    private Double getPrincipalPayment(CreditInfo creditInfo) {
         double S = valueOf(creditInfo.getSum());
         double N = valueOf(creditInfo.getTerm());
         double P = Double.parseDouble(interestRate) / 1200;
 //        double result = S * (P / (1 - Math.pow((1 + P), -N)));
-        double result = S * (P + (P / (Math.pow((1 + P), N) - 1)));
 
-        return df.format(result);
-    }
-
-    private String getBalanceOfPrincipal(CreditInfo creditInfo, List<Payment> paymentList) {
-        double S = valueOf(creditInfo.getSum());
-        for (int i = 0; i < paymentList.size() - 1; i++) {
-            S = S - Double.parseDouble(paymentList.get(i).getPrincipalPayment())
-                    - Double.parseDouble(paymentList.get(i).getInterestPayment());
-        }
-
-        return df.format(S);
-    }
-
-    private String getInterestPayment(List<Payment> paymentList) {
-        double Sn = Double.parseDouble(paymentList.get(paymentList.size() - 1).getBalanceOfPrincipal());
-        double P = Double.parseDouble(interestRate) / 1200;
-        double result = Sn * P / 12;
-
-        return df.format(result);
-    }
-
-    private String getTotalPayment(List<Payment> paymentList) {
-        double principalPayment = Double.parseDouble(paymentList.get(paymentList.size()-1).getPrincipalPayment());
-        double interestPayment = Double.parseDouble(paymentList.get(paymentList.size()-1).getInterestPayment());
-
-        return df.format(principalPayment + interestPayment);
+        return S * (P + (P / (Math.pow((1 + P), N) - 1)));
     }
 
 }
